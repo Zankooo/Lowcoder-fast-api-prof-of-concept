@@ -1,0 +1,15 @@
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS system files
+.DS_Store
+
+# Local data (optional - uncomment if you want to ignore local databases/JSONs)
+# podatki/
