@@ -248,5 +248,10 @@
         "ime": "David",
         "telefonska_stevilka": "13488886666",
         "datum_rojstva": "1980-03-16"
+    },
+    {
+        "ime": "zan",
+        "telefonska_stevilka": "32311313123",
+        "datum_rojstva": "2026-04-30"
     }
 ]
