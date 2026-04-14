@@ -4,17 +4,19 @@
 To je repozitorij, ki je namenjen kot backend projekt za frontend ki je v Lowcoderju. Torej v Lowcoderju pridobimo informacije oziroma podatke od uporabnika, jih potem pošljemo na backend in jih procesiramo. Nato procesiranje podatke pošljemo spet nazaj na frontend kjer jih tudi prikažemo.
 
 ## Nastavitev za delovanje lokalno (MacOS)
-- Na samem zacetku mores inicializirati python .venv environment - okolje:
+- Na samem zacetku mores inicializirati python .venv environment - okolje v root mapi:
 ```python3 -m venv .venv```
 
-- Potem instaliras vse requirementse iz mape:
+- Aktiviraš python environment v root mapi:
+```source .venv/bin/activate```
+
+- Potem instaliraš vse requirementse iz mape iz root mape:
 ```pip install -r requirements.txt```
 
-- Komanda s katero laufaš program:
-``` uvicorn main:app --reload```
+- Komanda s katero laufaš program iz root mape (kjer je ta README):
+```uvicorn app.main:app --reload```
 
-- Če komanda ne dela, verjetno ne dela ker okolje .venv ni aktivirano. To nardiš:
-```source .venv/bin/activate```
+- Če ne dela je zelo verjetno problem z porti!
 
 ## Nastavitev za delovanje v Dockerju 
 - Zgraditi image:
