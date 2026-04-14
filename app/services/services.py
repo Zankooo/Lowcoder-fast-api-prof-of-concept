@@ -1,8 +1,16 @@
+from app.schemas.schemas import XlsxBase64Request
 import json
 import os
 import base64
 import xml.etree.ElementTree as ET
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
+import re
+from io import BytesIO
+from typing import List
+from openpyxl import load_workbook
+
+
+
 
 POT_DO_DATOTEKE = "podatki/uporabniki.json"
 
@@ -85,12 +93,13 @@ async def obdelaj_xml_datoteke(payload):
     pot_do_datoteke = "podatki/telefonske_cifre.json"
 
     obstojece_stevilke = []
-
     if os.path.exists(pot_do_datoteke):
-        with open(pot_do_datoteke, "w", encoding="utf-8") as f:
-            json.dump({"telefonske_stevilke": []}, f, ensure_ascii=False, indent=2)
-
-    obstojece_stevilke = []
+        try:
+            with open(pot_do_datoteke, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                obstojece_stevilke = data.get("telefonske_stevilke", [])
+        except (json.JSONDecodeError, FileNotFoundError):
+            obstojece_stevilke = []
 
     vse_stevilke = obstojece_stevilke + telefonske_stevilke
 
@@ -107,3 +116,85 @@ async def obdelaj_xml_datoteke(payload):
         "telefonske_stevilke": telefonske_stevilke,
         "vse_stevilke": vse_stevilke
     }
+
+
+
+
+
+NAME_HEADERS = {"name", "ime", "full name", "fullname"}
+PHONE_HEADERS = {"phone", "telefon", "telefonska", "telefonska stevilka", "telefonska številka", "mobile", "gsm"}
+
+
+def normalize_header(value) -> str:
+    if value is None:
+        return ""
+    return str(value).strip().lower()
+
+
+def normalize_phone(value) -> str:
+    if value is None:
+        return ""
+    return re.sub(r"[^\d+]", "", str(value).strip())
+
+
+def remove_base64_prefix(base64_string: str) -> str:
+    if "," in base64_string:
+        return base64_string.split(",", 1)[1]
+    return base64_string
+
+
+def obdelaj_xlsx(data: XlsxBase64Request):
+    results = []
+
+    for i, file_base64 in enumerate(data.files):
+        try:
+            clean_base64 = remove_base64_prefix(file_base64)
+            file_bytes = base64.b64decode(clean_base64)
+
+            workbook = load_workbook(filename=BytesIO(file_bytes), data_only=True)
+
+            file_contacts = []
+
+            for sheet in workbook.worksheets:
+                rows = list(sheet.iter_rows(values_only=True))
+
+                if not rows:
+                    continue
+
+                headers = [normalize_header(cell) for cell in rows[0]]
+
+                name_index = None
+                phone_index = None
+
+                for j, header in enumerate(headers):
+                    if header in NAME_HEADERS and name_index is None:
+                        name_index = j
+                    if header in PHONE_HEADERS and phone_index is None:
+                        phone_index = j
+
+                if name_index is None or phone_index is None:
+                    continue
+
+                for row in rows[1:]:
+                    name = str(row[name_index]).strip() if name_index < len(row) and row[name_index] is not None else ""
+                    phone = normalize_phone(row[phone_index]) if phone_index < len(row) else ""
+
+                    if not name and not phone:
+                        continue
+
+                    file_contacts.append({
+                        "name": name,
+                        "phone": phone
+                    })
+
+            results.append({
+                "file_name": f"datoteka_{i+1}.xlsx",
+                "contacts": file_contacts
+            })
+        except Exception as e:
+            results.append({
+                "file_name": f"datoteka_{i+1}.xlsx",
+                "error": str(e)
+            })
+
+    return results

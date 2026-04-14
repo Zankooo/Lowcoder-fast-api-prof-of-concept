@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from app.schemas.schemas import UserCreate, XmlFilesRequest
-from app.services.services import shrani_userja, vrni_vse_userje, obdelaj_xml_datoteke
+from app.schemas.schemas import UserCreate, XmlFilesRequest, XlsxBase64Request
+from app.services.services import shrani_userja, vrni_vse_userje, obdelaj_xml_datoteke, obdelaj_xlsx
 
 
 router = APIRouter()
@@ -25,3 +25,6 @@ def vrni_vse_uporabnike():
 async def sprejmi_xml_datoteke(payload: XmlFilesRequest):
     return await obdelaj_xml_datoteke(payload)
 
+@router.post("/xlsx")
+async def extract_contacts_base64(payload: XlsxBase64Request):
+    return obdelaj_xlsx(payload)
