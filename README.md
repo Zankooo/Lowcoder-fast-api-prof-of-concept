@@ -58,7 +58,13 @@ Narejeno za naslednje 4 primere uporabe (usecase) -> predvideva se da so takšni
     | Rok Kos | 031456010 | 1998-06-03 |
 
     Na frontendu naložimo (upload) 3 takšne XML, pošljemo na backend kjer se zgodi procesiranje in vse skupaj se nazaj pošlje na frontend le 
-    imena in njihove telefonske številke. 
+    imena in njihove telefonske številke.
+
+- Sta pa še dva endpointa namenjena dodantim informacijam:
+  
+      / -> ki pošlje nazaj json da backend dela 
+
+      /docs -> prikaže vse end pointe
     
 ## Izzivi in problemi
 Največ izzivov in problemov sem imel, oziroma nastane na strani Lowcoderja ko je potrebno pošiljati datoteke na backend. (XML,XLSX,CSV). Namreč pri navadnem programiranju oziroma če uporabljaš http client Postman, lahko brez problema pošiljaš na backend datoteke: 
