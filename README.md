@@ -3,7 +3,7 @@
 ## Povzetek
 To je repozitorij, ki je namenjen kot backend projekt za frontend ki je v Lowcoderju. Torej v Lowcoderju pridobimo informacije oziroma podatke od uporabnika, jih potem pošljemo na backend in jih procesiramo. Nato procesiranje podatke pošljemo spet nazaj na frontend kjer jih tudi prikažemo.
 
-## Nastavitev za delovanje (MacOS)
+## Nastavitev za delovanje lokalno (MacOS)
 - Na samem zacetku mores inicializirati python .venv environment - okolje:
 ```python3 -m venv .venv```
 
@@ -15,6 +15,14 @@ To je repozitorij, ki je namenjen kot backend projekt za frontend ki je v Lowcod
 
 - Če komanda ne dela, verjetno ne dela ker okolje .venv ni aktivirano. To nardiš:
 ```source .venv/bin/activate```
+
+## Nastavitev za delovanje v Dockerju 
+- Zgraditi image:
+``` docker build -t fast-api-backend .```
+
+- Nato image zaženeš z:
+``` docker run -p 8080:80 fast-api-backend ```
+
 
 ## Use case (primeri uporabe)
 Narejeno za naslednje 4 primere uporabe (usecase) -> predvideva se da so takšni tipi primerov uporabe najpogostejši:
